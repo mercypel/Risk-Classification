@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project 2 — Application Risk Classification (XGBoost)</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      padding: 15px 0;
+      z-index: 1000;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 600;
+    }
+
+    .banner {
+      background: linear-gradient(135deg, #007bff, #6610f2);
+      color: white;
+      padding: 120px 20px 80px;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      color: #007bff;
+      margin-top: 40px;
+    }
+
+    h3 {
+      margin-top: 30px;
+      color: #444;
+    }
+
+    .dashboard img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      margin-top: 20px;
+    }
+
+    .dashboard p {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#data">Data Preparation</a></li>
+      <li><a href="#model">Model Training</a></li>
+      <li><a href="#packaging">Packaged Model</a></li>
+      <li><a href="#visuals">Visualisations</a></li>
+      <li><a href="#run">How to Run</a></li>
+      <li><a href="#requirements">Requirements</a></li>
+    </ul>
+  </nav>
+
+  <div class="banner">
+    <h1>Project 2 — Application Risk Classification</h1>
+    <p>XGBoost Model for High‑Risk vs Low‑Risk Application Detection</p>
+  </div>
+
+  <div class="container">
+
+    <h2 id="overview">📌 Project Overview</h2>
+    <p>
+      This project builds a machine‑learning model that classifies software applications as either 
+      <strong>high‑risk</strong> or <strong>low‑risk</strong> based on their behavioural features.
+      The raw dataset was provided in a sparse format, requiring careful transformation before modelling.
+      The final XGBoost classifier achieved <strong>93.2% precision</strong> and <strong>98.2% recall</strong>
+      on the validation split.
+    </p>
+
+    <h2 id="data">🧹 Data Preparation</h2>
+    <p>
+      The raw data consisted of rows containing a risk score followed by only the features triggered by each application.
+      Each row was parsed into a dictionary and expanded into a full table using pandas. Missing features were left as 
+      <code>NaN</code>, which XGBoost handles internally.
+    </p>
+
+    <ul>
+      <li>Parsed sparse rows into full feature tables</li>
+      <li>Mapped feature numbers to meaningful names</li>
+      <li>Created binary <code>risk_indicator</code> (≥0.30 = high risk)</li>
+      <li>Removed duplicate rows to avoid leakage</li>
+      <li>Saved final dataset as <code>processed_data.csv</code></li>
+    </ul>
+
+    <h2 id="model">🤖 Model Training</h2>
+    <p>
+      XGBoost was selected due to its strong performance on high‑dimensional, sparse datasets.
+      The dataset was split using an 80/20 train–validation split.
+    </p>
+
+    <ul>
+      <li>Precision: <strong>93.2%</strong></li>
+      <li>Recall: <strong>98.2%</strong></li>
+      <li>Feature importance plot generated (Top 15 features)</li>
+    </ul>
+
+    <div class="dashboard">
+      <img src="plots/feature_importance_top15.png" alt="Feature Importance Plot">
+      <p>Top 15 Most Influential Features</p>
+    </div>
+
+    <h2 id="packaging">📦 Packaged Model</h2>
+    <p>
+      The trained model is saved as <code>xgboost_model.pkl</code>, and the full list of feature names is saved as 
+      <code>feature_columns.pkl</code>. This ensures any developer can reconstruct the correct input structure.
+    </p>
+
+    <ul>
+      <li>Load model using <code>pickle</code></li>
+      <li>Load feature list to build correct DataFrame</li>
+      <li>Missing features should remain <code>NaN</code></li>
+      <li>Model returns <code>1</code> (high risk) or <code>0</code> (low risk)</li>
+    </ul>
+
+    <h2 id="visuals">📊 Visualisations</h2>
+    <p>Below is the feature importance plot. Additional plots can be added here if needed.</p>
+
+    <div class="dashboard">
+      <img src="plots/feature_importance_top15.png" alt="Feature Importance">
+      <p>Feature Importance (Top 15)</p>
+    </div>
+
+    <h2 id="run">▶️ How to Run</h2>
+    <ol>
+      <li>Run <code>data_preparation.py</code></li>
+      <li>Run <code>model_training.py</code></li>
+      <li>Run <code>model_testing.py</code></li>
+      <li>Run <code>sample_test_script.py</code> for predictions</li>
+    </ol>
+
+    <h2 id="requirements">📄 Requirements</h2>
+    <p>This project uses Python 3.12.7. Install dependencies using:</p>
+
+    <pre><code>pip install -r requirements.txt</code></pre>
+
+  </div>
+
+  <div class="footer">
+    © 2026 Application Risk Classification — Data Science Project 2
+  </div>
+
+</body>
+</html>
 
